@@ -671,7 +671,7 @@
     "use strict";
 
     // ── ① CONFIGURE — paste your Apps Script URL here ──────
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoom4W5UWJCZXDAqR7MPU-30crFIufIjAyHrdlOokC30UxL2k3jQBwGF3hyaNrJaaOzg/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPxTRAca3FQueIMd4M8DS4aTt6Z9IZhHPxiStlvproeXjewi24Q-u5BmmsWY7AOzqeGA/exec";
     const PAGE_SIZE = 6;
 
     // ── STATE ───────────────────────────────────────────────
@@ -990,10 +990,19 @@
       setSubmitting(true);
 
       try {
-        const payload = { name, message, videoLink, hp_field };
+        // Siapkan payload — gunakan FormData agar Apps Script bisa baca
+        const fd = new FormData();
+        fd.append("name",      name);
+        fd.append("message",   message);
+        fd.append("videoLink", videoLink);
+        fd.append("hp_field",  hp_field);
+
         if (selectedFile) {
-          payload.imageData = await readFileAsBase64(selectedFile);
-          payload.imageName = selectedFile.name;
+          // Encode foto ke Base64 lalu kirim sebagai field teks
+          // (Apps Script tidak bisa terima binary multipart, tapi bisa baca base64 string)
+          const b64 = await readFileAsBase64(selectedFile);
+          fd.append("imageData", b64);
+          fd.append("imageName", selectedFile.name);
         }
 
         // Dev mode simulation
@@ -1016,16 +1025,23 @@
           return;
         }
 
-        const res  = await fetch(APPS_SCRIPT_URL, {
-          method : "POST",
-          body   : JSON.stringify(payload),
+        // Kirim ke Apps Script — no-cors agar tidak ada preflight CORS block
+        await fetch(APPS_SCRIPT_URL, {
+          method    : "POST",
+          mode      : "no-cors",
+          body      : fd,
         });
-        // no-cors returns opaque response — kita asumsikan sukses jika tidak throw
-        let data = {};
-        try { data = await res.json(); } catch(_) {}
-        if (data.error) throw new Error(data.error);
 
-        prependCard(data.entry);
+        // no-cors = opaque response, tidak bisa baca isinya
+        // Asumsikan sukses, tampilkan card langsung dari data lokal
+        prependCard({
+          timestamp: new Date().toISOString(),
+          name     : name || "Anonymous",
+          message,
+          imageUrl : selectedFile ? URL.createObjectURL(selectedFile) : "",
+          videoLink,
+        });
+
         form.reset();
         selectedFile = null;
         prevWrap.classList.add("hidden");
