@@ -891,6 +891,34 @@
 
 
     // ── ⑧ FETCH MEMORIES ───────────────────────────────────
+    // JSONP loader untuk GET — menghindari CORS pada Apps Script
+    function fetchMemoriesJsonp() {
+      return new Promise((resolve, reject) => {
+        const cbName = "_gsMemCb_" + Date.now();
+        const script = document.createElement("script");
+        const timer  = setTimeout(() => {
+          delete window[cbName];
+          script.remove();
+          reject(new Error("Timeout"));
+        }, 10000);
+
+        window[cbName] = function(data) {
+          clearTimeout(timer);
+          delete window[cbName];
+          script.remove();
+          resolve(data);
+        };
+
+        script.src = `${APPS_SCRIPT_URL}?action=getMemories&callback=${cbName}`;
+        script.onerror = () => {
+          clearTimeout(timer);
+          delete window[cbName];
+          reject(new Error("Script load error"));
+        };
+        document.head.appendChild(script);
+      });
+    }
+
     async function fetchMemories() {
       if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_")) {
         memoriesLoading.classList.add("hidden");
@@ -898,8 +926,7 @@
         return;
       }
       try {
-        const res  = await fetch(`${APPS_SCRIPT_URL}?action=getMemories`, { cache: "no-cache" });
-        const data = await res.json();
+        const data = await fetchMemoriesJsonp();
         memoriesLoading.classList.add("hidden");
         if (data.error) throw new Error(data.error);
         allMemories = data.memories || [];
@@ -991,10 +1018,11 @@
 
         const res  = await fetch(APPS_SCRIPT_URL, {
           method : "POST",
-          headers: { "Content-Type": "application/json" },
           body   : JSON.stringify(payload),
         });
-        const data = await res.json();
+        // no-cors returns opaque response — kita asumsikan sukses jika tidak throw
+        let data = {};
+        try { data = await res.json(); } catch(_) {}
         if (data.error) throw new Error(data.error);
 
         prependCard(data.entry);
