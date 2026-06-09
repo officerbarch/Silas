@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>In Memoriam — Prof. [Name] | Architect & Educator</title>
+  <meta name="description" content="A living tribute to the life, work, and enduring legacy of Professor [Name], architect and educator." />
+
+  <!-- ── FONTS ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- ── TAILWIND CDN ── -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ── TAILWIND CONFIG ── -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ivory   : "#FDFBF7",   // warm background
+            ink     : "#1A2421",   // deep organic charcoal
+            ash     : "#4A5568",   // secondary text
+            terra   : "#C87A53",   // terracotta accent
+            "terra-light": "#F0DDD1", // tinted terra for backgrounds
+            stone   : "#E8E3DA",   // borders and dividers
+            fog     : "#F3F0EB",   // subtle card backgrounds
+          },
+          fontFamily: {
+            serif  : ["Lora", "Georgia", "serif"],
+            sans   : ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+          },
+          letterSpacing: {
+            architectural: "0.25em",
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- ── CUSTOM STYLES ── -->
+  <style>
+    /* ── Base ── */
+    html { background-color: #FDFBF7; }
+    body {
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      color: #1A2421;
+      background-color: #FDFBF7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Typography ── */
+    .font-serif { font-family: "Lora", Georgia, serif; }
+
+    /* ── Timeline ── */
+    .timeline-line {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1px;
+      top: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, transparent, #C87A53 8%, #C87A53 92%, transparent);
+      opacity: 0.4;
+    }
+    .timeline-node {
+      width: 12px;
+      height: 12px;
+      background-color: #C87A53;
+      border: 2px solid #FDFBF7;
+      box-shadow: 0 0 0 1px #C87A53;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .timeline-card {
+      border: 1px solid #E8E3DA;
+      transition: border-color 0.2s ease;
+    }
+    .timeline-card:hover { border-color: #C87A53; }
+
+    /* ── Memory cards ── */
+    .memory-card {
+      border: 1px solid #E8E3DA;
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+    .memory-card:hover {
+      border-color: #C87A53;
+      transform: translateY(-2px);
+    }
+
+    /* ── Form ── */
+    .form-input {
+      background: #FDFBF7;
+      border: 1px solid #E8E3DA;
+      color: #1A2421;
+      font-family: "Plus Jakarta Sans", sans-serif;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #C87A53;
+      box-shadow: 0 0 0 3px rgba(200,122,83,0.12);
+    }
+    .form-input::placeholder { color: #9CA3AF; }
+
+    /* ── Honeypot — MUST remain visually hidden ── */
+    .hp-trap {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 0;
+      width: 0;
+      z-index: -1;
+      pointer-events: none;
+      tabindex: -1;
+    }
+
+    /* ── Eyebrow label ── */
+    .eyebrow {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #C87A53;
+      font-weight: 600;
+    }
+
+    /* ── Thin rule ── */
+    .rule { height: 1px; background: #E8E3DA; }
+
+    /* ── Nav link ── */
+    .nav-link {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: #4A5568;
+      transition: color 0.15s ease;
+    }
+    .nav-link:hover { color: #C87A53; }
+
+    /* ── Scroll-reveal animation ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Image preview ── */
+    #imagePreviewWrap img { object-fit: cover; }
+
+    /* ── Toast notification ── */
+    #toast {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    #toast.show { opacity: 1 !important; transform: translateY(0) !important; }
+
+    /* ── Loading spinner ── */
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid rgba(200,122,83,0.3);
+      border-top-color: #C87A53;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Mobile timeline switch to single-column */
+    @media (max-width: 768px) {
+      .timeline-item-left,
+      .timeline-item-right { grid-column: 1 / -1; }
+      .timeline-line { left: 16px; transform: none; }
+      .timeline-center { justify-content: flex-start; padding-left: 8px; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { transition: none; opacity: 1; transform: none; }
+      .memory-card { transition: none; }
+      .spinner { animation: none; }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-ivory text-ink">
+
+  <!-- ═══════════════════════════════════════════════════
+       NAVIGATION
+  ════════════════════════════════════════════════════ -->
+  <nav class="sticky top-0 z-50 bg-ivory/90 backdrop-blur-sm border-b border-stone">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <!-- Wordmark -->
+      <span class="font-serif text-sm italic text-ash">In Memoriam</span>
+
+      <!-- Links -->
+      <div class="flex items-center gap-8">
+        <a href="#biography" class="nav-link">Biography</a>
+        <a href="#timeline"  class="nav-link">Timeline</a>
+        <a href="#memories"  class="nav-link">Memories</a>
+        <a href="#share"     class="nav-link hidden sm:block bg-terra text-ivory px-4 py-1.5 rounded-sm hover:bg-opacity-90 transition-colors" style="color:#FDFBF7;">
+          Leave a Memory
+        </a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       HERO — OBITUARY
+  ════════════════════════════════════════════════════ -->
+  <header id="biography" class="max-w-6xl mx-auto px-6 pt-24 pb-20">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+      <!-- Left: portrait column -->
+      <div class="lg:col-span-4 reveal">
+        <!-- Portrait placeholder — replace src with real photo -->
+        <div class="aspect-[3/4] bg-fog border border-stone overflow-hidden relative">
+          <img
+            src="portrait-placeholder.jpg"
+            alt="Portrait of Professor [Name]"
+            class="w-full h-full object-cover grayscale"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <!-- Fallback initials block -->
+          <div class="absolute inset-0 bg-fog hidden items-center justify-center">
+            <span class="font-serif text-5xl text-stone select-none">A.P.</span>
+          </div>
+        </div>
+
+        <!-- Dates below portrait -->
+        <div class="mt-4 flex items-center gap-3">
+          <div class="h-px flex-1 bg-stone"></div>
+          <span class="font-sans text-xs text-ash tracking-widest uppercase">1948 — 2025</span>
+          <div class="h-px flex-1 bg-stone"></div>
+        </div>
+      </div>
+
+      <!-- Right: bio text -->
+      <div class="lg:col-span-8 lg:pt-2 reveal" style="transition-delay:0.1s;">
+
+        <p class="eyebrow mb-5">Architect · Educator · Humanist</p>
+
+        <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl leading-tight text-ink mb-2">
+          Prof. [Full Name]
+        </h1>
+        <h2 class="font-serif text-xl text-ash italic mb-10">
+          Faculty of Architecture — [University Name]
+        </h2>
+
+        <div class="rule mb-10"></div>
+
+        <!-- Biography paragraphs -->
+        <div class="space-y-6 font-sans text-base leading-8 text-ink/90 max-w-prose">
+          <p>
+            Professor [Name] devoted more than four decades to the discipline of architecture not
+            merely as the science of building, but as an act of listening — to place, to community,
+            to the slow sediment of culture that accumulates in walls, thresholds, and courtyards.
+            He believed that a building was a conversation across generations, and he taught his
+            students to enter that conversation with humility.
+          </p>
+          <p>
+            Born in [City] in 1948, he completed his undergraduate studies at the [University] before
+            pursuing graduate work in [Country], where he encountered the writings of Kenneth Frampton
+            and the emerging discourse on Critical Regionalism. He returned home not with imported
+            answers, but with sharper questions about what an architecture rooted in local materials,
+            climate, and social memory might look like.
+          </p>
+          <p>
+            His built work — modest in scale, radical in care — spans community libraries, river-edge
+            housing, and a handful of civic buildings that have outlasted their original briefs because
+            they were designed to be altered, to be claimed, to be lived in fully. His scholarship,
+            particularly his landmark <em>Dwelling in the Margin</em> (1997), established him as one
+            of Southeast Asia's most searching voices on the ethics of place.
+          </p>
+          <p>
+            He is survived by his wife [Name], his children [Name] and [Name], and by the hundreds of
+            students who carry his questions into their own practices. This site is a space for all
+            who were shaped by his presence to leave a trace of that encounter.
+          </p>
+        </div>
+
+        <!-- Academic honours -->
+        <div class="mt-12 grid grid-cols-2 sm:grid-cols-3 gap-6">
+          <div class="border-l-2 border-terra pl-4">
+            <p class="font-serif text-2xl font-medium text-terra">40+</p>
+            <p class="font-sans text-xs text-ash mt-1 leading-snug">Years in academia</p>
+          </div>
+          <div class="border-l-2 border-terra pl-4">
+            <p class="font-serif text-2xl font-medium text-terra">12</p>
+            <p class="font-sans text-xs text-ash mt-1 leading-snug">Published works</p>
+          </div>
+          <div class="border-l-2 border-terra pl-4">
+            <p class="font-serif text-2xl font-medium text-terra">500+</p>
+            <p class="font-sans text-xs text-ash mt-1 leading-snug">Graduate students</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TIMELINE
+  ════════════════════════════════════════════════════ -->
+  <section id="timeline" class="bg-fog border-y border-stone py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+
+      <div class="text-center mb-16 reveal">
+        <p class="eyebrow mb-3">A Life in Architecture</p>
+        <h2 class="font-serif text-3xl sm:text-4xl text-ink">Timeline of Work &amp; Thought</h2>
+        <p class="font-sans text-sm text-ash mt-4 max-w-md mx-auto leading-7">
+          Career milestones, published ideas, and built works — arranged as one might read an architectural monograph.
+        </p>
+      </div>
+
+      <!-- Timeline container -->
+      <div class="relative" id="timeline-container">
+        <!-- Vertical line (hidden on mobile, replaced by left-edge line in CSS) -->
+        <div class="timeline-line hidden md:block"></div>
+
+        <!-- Timeline items are injected here + static seed items below -->
+        <div class="space-y-0" id="timeline-items">
+
+          <!-- ── STATIC SEED ITEMS ─────────────────────────── -->
+          <!-- Each item alternates left/right on desktop -->
+
+          <!-- Item 1 -->
+          <div class="timeline-entry reveal" data-side="left">
+            <div class="grid md:grid-cols-2 gap-0 items-center">
+              <div class="md:pr-12 md:text-right pb-8 md:pb-12">
+                <div class="timeline-card bg-ivory p-6 inline-block text-left w-full">
+                  <span class="eyebrow block mb-2">1970</span>
+                  <h3 class="font-serif text-lg font-medium mb-2">Undergraduate Degree</h3>
+                  <p class="font-sans text-sm text-ash leading-7">
+                    Graduated with Honours from the Faculty of Architecture, [University].
+                    His final thesis — a low-cost river-edge housing proposal — already bore the
+                    hallmarks of his later thought.
+                  </p>
+                </div>
+              </div>
+              <div class="hidden md:flex timeline-center items-center justify-center">
+                <div class="timeline-node"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="timeline-entry reveal" data-side="right" style="transition-delay:0.05s;">
+            <div class="grid md:grid-cols-2 gap-0 items-center">
+              <div class="hidden md:flex timeline-center items-center justify-center">
+                <div class="timeline-node"></div>
+              </div>
+              <div class="md:pl-12 pb-8 md:pb-12">
+                <div class="timeline-card bg-ivory p-6 inline-block w-full">
+                  <span class="eyebrow block mb-2">1976</span>
+                  <h3 class="font-serif text-lg font-medium mb-2">Graduate Studies Abroad</h3>
+                  <p class="font-sans text-sm text-ash leading-7">
+                    Pursued postgraduate research at [European University], engaging deeply with
+                    Kenneth Frampton's emerging Critical Regionalism discourse. Returned with
+                    a framework for thinking architecturally about place and resistance.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="timeline-entry reveal" data-side="left" style="transition-delay:0.1s;">
+            <div class="grid md:grid-cols-2 gap-0 items-center">
+              <div class="md:pr-12 md:text-right pb-8 md:pb-12">
+                <div class="timeline-card bg-ivory p-6 inline-block text-left w-full">
+                  <span class="eyebrow block mb-2">1982</span>
+                  <h3 class="font-serif text-lg font-medium mb-2">First Major Built Work</h3>
+                  <p class="font-sans text-sm text-ash leading-7">
+                    Completed the [Community Library Name], [City] — a compact civic building that
+                    drew on local brick-laying traditions while opening its central courtyard to
+                    the rhythm of the surrounding kampung.
+                  </p>
+                </div>
+              </div>
+              <div class="hidden md:flex timeline-center items-center justify-center">
+                <div class="timeline-node"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="timeline-entry reveal" data-side="right" style="transition-delay:0.15s;">
+            <div class="grid md:grid-cols-2 gap-0 items-center">
+              <div class="hidden md:flex timeline-center items-center justify-center">
+                <div class="timeline-node"></div>
+              </div>
+              <div class="md:pl-12 pb-8 md:pb-12">
+                <div class="timeline-card bg-ivory p-6 inline-block w-full">
+                  <span class="eyebrow block mb-2">1990</span>
+                  <h3 class="font-serif text-lg font-medium mb-2">Appointed Full Professor</h3>
+                  <p class="font-sans text-sm text-ash leading-7">
+                    Named Chair of Design Theory at [University]. His studio became known
+                    as a space where social questions were as rigorously examined as structural ones.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 5 — Landmark Book -->
+          <div class="timeline-entry reveal" data-side="left" style="transition-delay:0.2s;">
+            <div class="grid md:grid-cols-2 gap-0 items-center">
+              <div class="md:pr-12 md:text-right pb-8 md:pb-12">
+                <div class="timeline-card bg-terra-light border-terra p-6 inline-block text-left w-full">
+                  <span class="eyebrow block mb-2" style="color:#8B4E2E;">1997 · Publication</span>
+                  <h3 class="font-serif text-lg font-medium mb-2">
+                    <em>Dwelling in the Margin</em>
+                  </h3>
+                  <p class="font-sans text-sm text-ash leading-7">
+                    His most widely read book. An argument that the informal city is not a problem
+                    to be solved but a living archive of spatial intelligence — one that formal
+                    architecture would do well to apprentice itself to.
+                  </p>
+                </div>
+              </div>
+              <div class="hidden md:flex timeline-center items-center justify-center">
+                <div class="timeline-node" style="background:#8B4E2E;box-shadow:0 0 0 1px #8B4E2E;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 6 -->
+          <div class="timeline-entry reveal" data-side="right" style="transition-delay:0.25s;">
+            <div class="grid md:grid-cols-2 gap-0 items-center">
+              <div class="hidden md:flex timeline-center items-center justify-center">
+                <div class="timeline-node"></div>
+              </div>
+              <div class="md:pl-12 pb-8 md:pb-12">
+                <div class="timeline-card bg-ivory p-6 inline-block w-full">
+                  <span class="eyebrow block mb-2">2003</span>
+                  <h3 class="font-serif text-lg font-medium mb-2">UNESCO Heritage Consultancy</h3>
+                  <p class="font-sans text-sm text-ash leading-7">
+                    Served on the UNESCO advisory panel for the conservation of living heritage
+                    districts across Southeast Asia, advocating for resident-centred approaches
+                    over tourism-driven restoration.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 7 -->
+          <div class="timeline-entry reveal" data-side="left" style="transition-delay:0.3s;">
+            <div class="grid md:grid-cols-2 gap-0 items-center">
+              <div class="md:pr-12 md:text-right pb-8 md:pb-12">
+                <div class="timeline-card bg-ivory p-6 inline-block text-left w-full">
+                  <span class="eyebrow block mb-2">2015</span>
+                  <h3 class="font-serif text-lg font-medium mb-2">Lifetime Achievement Award</h3>
+                  <p class="font-sans text-sm text-ash leading-7">
+                    Received the [National Architecture Association] Lifetime Achievement Award.
+                    In his acceptance speech he said: <em>"The only award I truly want is to walk
+                    through a neighbourhood and hear children playing in a courtyard I designed."</em>
+                  </p>
+                </div>
+              </div>
+              <div class="hidden md:flex timeline-center items-center justify-center">
+                <div class="timeline-node"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 8 — Final lecture -->
+          <div class="timeline-entry reveal" data-side="right" style="transition-delay:0.35s;">
+            <div class="grid md:grid-cols-2 gap-0 items-center">
+              <div class="hidden md:flex timeline-center items-center justify-center">
+                <div class="timeline-node" style="background:#C87A53;width:16px;height:16px;box-shadow:0 0 0 3px rgba(200,122,83,0.25);"></div>
+              </div>
+              <div class="md:pl-12 pb-8 md:pb-12">
+                <div class="timeline-card bg-ivory p-6 inline-block w-full border-terra">
+                  <span class="eyebrow block mb-2">2024 · Final Lecture</span>
+                  <h3 class="font-serif text-lg font-medium mb-2">"On Building for the Unborn"</h3>
+                  <p class="font-sans text-sm text-ash leading-7">
+                    His last public lecture, delivered to a standing audience at [University].
+                    A meditation on intergenerational responsibility in the built environment.
+                    The recording is <a href="#" class="text-terra underline underline-offset-2">available here</a>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /#timeline-items -->
+      </div><!-- /.relative -->
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       MEMORY WALL — READ
+  ════════════════════════════════════════════════════ -->
+  <section id="memories" class="py-24 px-6 max-w-6xl mx-auto">
+
+    <div class="text-center mb-14 reveal">
+      <p class="eyebrow mb-3">Community Tributes</p>
+      <h2 class="font-serif text-3xl sm:text-4xl text-ink">Memory Wall</h2>
+      <p class="font-sans text-sm text-ash mt-4 max-w-md mx-auto leading-7">
+        Colleagues, students, and community members are invited to leave a written memory, a photograph, or a video link. No account required.
+      </p>
+    </div>
+
+    <!-- Loading state -->
+    <div id="memories-loading" class="flex justify-center items-center py-16">
+      <div class="text-center">
+        <div class="spinner mx-auto mb-4"></div>
+        <p class="font-sans text-sm text-ash">Loading memories…</p>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="memories-empty" class="hidden text-center py-16">
+      <p class="font-serif text-xl text-ash italic">Be the first to leave a memory.</p>
+    </div>
+
+    <!-- Error state -->
+    <div id="memories-error" class="hidden text-center py-10">
+      <p class="font-sans text-sm text-ash">Memories could not be loaded. Please refresh the page.</p>
+    </div>
+
+    <!-- Memory cards grid -->
+    <div id="memories-grid"
+         class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <!-- Load more -->
+    <div id="load-more-wrap" class="hidden text-center mt-10">
+      <button id="load-more-btn"
+              class="font-sans text-xs tracking-widest uppercase text-terra border border-terra px-8 py-3 hover:bg-terra hover:text-ivory transition-colors">
+        Show More Memories
+      </button>
+    </div>
+  </section>
+
+
+  <!-- Divider -->
+  <div class="max-w-6xl mx-auto px-6"><div class="rule"></div></div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       MEMORY WALL — SUBMIT FORM
+  ════════════════════════════════════════════════════ -->
+  <section id="share" class="py-24 px-6">
+    <div class="max-w-2xl mx-auto reveal">
+
+      <div class="text-center mb-12">
+        <p class="eyebrow mb-3">Leave a Tribute</p>
+        <h2 class="font-serif text-3xl text-ink">Share Your Memory</h2>
+        <p class="font-sans text-sm text-ash mt-4 leading-7">
+          Write a few words, upload a photograph, or paste a video link.
+          Your tribute will appear on the Memory Wall above.
+        </p>
+      </div>
+
+      <form id="memory-form" novalidate autocomplete="off">
+
+        <!-- ── HONEYPOT — must stay visually hidden ── -->
+        <div class="hp-trap" aria-hidden="true">
+          <label for="hp_field">Leave this field empty</label>
+          <input type="text" id="hp_field" name="hp_field" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <!-- Name -->
+        <div class="mb-6">
+          <label for="name" class="block font-sans text-xs text-ash uppercase tracking-wider mb-2">
+            Your Name <span class="text-stone">(optional)</span>
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="e.g. Budi Santoso, Class of 2002"
+            maxlength="120"
+            class="form-input w-full px-4 py-3 text-sm rounded-sm"
+          />
+        </div>
+
+        <!-- Message -->
+        <div class="mb-6">
+          <label for="message" class="block font-sans text-xs text-ash uppercase tracking-wider mb-2">
+            Your Memory <span class="text-terra">*</span>
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            rows="6"
+            placeholder="Write your memory or tribute here…"
+            maxlength="2000"
+            required
+            class="form-input w-full px-4 py-3 text-sm rounded-sm resize-none"
+          ></textarea>
+          <p class="font-sans text-xs text-stone mt-1.5 text-right">
+            <span id="char-count">0</span> / 2000
+          </p>
+        </div>
+
+        <!-- Photo upload -->
+        <div class="mb-6">
+          <label class="block font-sans text-xs text-ash uppercase tracking-wider mb-2">
+            Photo <span class="text-stone">(optional · max 5 MB)</span>
+          </label>
+
+          <!-- Custom file drop zone -->
+          <label for="photo-input"
+                 id="drop-zone"
+                 class="flex flex-col items-center justify-center gap-3 border border-dashed border-stone rounded-sm py-8 px-6 cursor-pointer hover:border-terra transition-colors bg-fog">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-stone" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span class="font-sans text-xs text-ash text-center">
+              Click to choose a photo, or drag &amp; drop here
+            </span>
+            <span class="font-sans text-xs text-stone">JPEG, PNG, WEBP, GIF</span>
+          </label>
+          <input type="file" id="photo-input" accept="image/jpeg,image/jpg,image/png,image/webp,image/gif" class="sr-only" />
+
+          <!-- Preview -->
+          <div id="imagePreviewWrap" class="hidden mt-3 relative">
+            <img id="imagePreview" src="" alt="Preview" class="w-32 h-32 rounded-sm border border-stone" />
+            <button type="button" id="removeImage"
+                    class="absolute -top-2 -right-2 bg-terra text-ivory rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-ink transition-colors"
+                    aria-label="Remove photo">✕</button>
+          </div>
+
+          <p id="photo-error" class="hidden font-sans text-xs text-red-500 mt-2"></p>
+        </div>
+
+        <!-- Video link -->
+        <div class="mb-8">
+          <label for="videoLink" class="block font-sans text-xs text-ash uppercase tracking-wider mb-2">
+            Video Link <span class="text-stone">(YouTube · Vimeo · Drive — optional)</span>
+          </label>
+          <input
+            type="url"
+            id="videoLink"
+            name="videoLink"
+            placeholder="https://youtube.com/watch?v=…"
+            maxlength="500"
+            class="form-input w-full px-4 py-3 text-sm rounded-sm"
+          />
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full bg-terra text-ivory font-sans text-sm font-medium tracking-widest uppercase py-4 rounded-sm hover:bg-opacity-90 transition-colors flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <span id="submit-label">Submit Memory</span>
+          <span id="submit-spinner" class="hidden"><span class="spinner" style="border-top-color:#FDFBF7;border-color:rgba(253,251,247,0.3);"></span></span>
+        </button>
+
+        <!-- Form-level error -->
+        <p id="form-error" class="hidden font-sans text-xs text-red-500 text-center mt-4"></p>
+      </form>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════════════ -->
+  <footer class="border-t border-stone bg-fog py-12 px-6 mt-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+
+      <div>
+        <p class="font-serif text-base italic text-ink mb-2">In Memoriam</p>
+        <p class="font-sans text-xs text-ash leading-6">
+          Prof. [Full Name]<br/>
+          1948 — 2025
+        </p>
+      </div>
+
+      <div>
+        <p class="eyebrow mb-3">This Site</p>
+        <p class="font-sans text-xs text-ash leading-6">
+          A living tribute maintained by the Faculty of Architecture, [University Name].
+          Memories submitted here are moderated before publication.
+        </p>
+      </div>
+
+      <div>
+        <p class="eyebrow mb-3">Contact</p>
+        <p class="font-sans text-xs text-ash leading-6">
+          For enquiries about the archive or the estate, please contact<br/>
+          <a href="mailto:memorial@university.ac.id" class="text-terra underline underline-offset-2">memorial@university.ac.id</a>
+        </p>
+      </div>
+
+    </div>
+
+    <div class="max-w-6xl mx-auto mt-10">
+      <div class="rule mb-6"></div>
+      <p class="font-sans text-xs text-stone text-center">
+        Built with respect. Hosted on GitHub Pages.
+      </p>
+    </div>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       TOAST NOTIFICATION
+  ════════════════════════════════════════════════════ -->
+  <div id="toast"
+       role="alert"
+       aria-live="polite"
+       class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ink text-ivory font-sans text-xs px-6 py-3 rounded-sm shadow-lg z-50"
+       style="opacity:0; transform:translate(-50%, 12px); pointer-events:none;">
+    <span id="toast-msg">Memory submitted.</span>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    "use strict";
+
+    // ── ① CONFIGURE THIS ───────────────────────────────────
+    /**
+     * Paste your Google Apps Script Web App URL here.
+     * It looks like: https://script.google.com/macros/s/XXXX/exec
+     */
+    const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+    // How many memory cards to show per "page"
+    const PAGE_SIZE = 6;
+
+    // ── STATE ──────────────────────────────────────────────
+    let allMemories  = [];   // full fetched array
+    let visibleCount = PAGE_SIZE;
+    let selectedFile = null; // the File object chosen for upload
+
+    // ── DOM REFS ───────────────────────────────────────────
+    const memoriesLoading = document.getElementById("memories-loading");
+    const memoriesEmpty   = document.getElementById("memories-empty");
+    const memoriesError   = document.getElementById("memories-error");
+    const memoriesGrid    = document.getElementById("memories-grid");
+    const loadMoreWrap    = document.getElementById("load-more-wrap");
+    const loadMoreBtn     = document.getElementById("load-more-btn");
+
+    const form         = document.getElementById("memory-form");
+    const submitBtn    = document.getElementById("submit-btn");
+    const submitLabel  = document.getElementById("submit-label");
+    const submitSpinner= document.getElementById("submit-spinner");
+    const formError    = document.getElementById("form-error");
+
+    const charCountEl  = document.getElementById("char-count");
+    const messageEl    = document.getElementById("message");
+    const photoInput   = document.getElementById("photo-input");
+    const dropZone     = document.getElementById("drop-zone");
+    const prevWrap     = document.getElementById("imagePreviewWrap");
+    const prevImg      = document.getElementById("imagePreview");
+    const removeImgBtn = document.getElementById("removeImage");
+    const photoError   = document.getElementById("photo-error");
+    const toast        = document.getElementById("toast");
+    const toastMsg     = document.getElementById("toast-msg");
+
+
+    // ── ② SCROLL REVEAL ───────────────────────────────────
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add("visible");
+          revealObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
+
+
+    // ── ③ CHARACTER COUNTER ───────────────────────────────
+    messageEl.addEventListener("input", () => {
+      charCountEl.textContent = messageEl.value.length;
+    });
+
+
+    // ── ④ IMAGE HANDLING ──────────────────────────────────
+
+    function validateAndSetImage(file) {
+      photoError.classList.add("hidden");
+
+      const allowed = ["image/jpeg","image/jpg","image/png","image/webp","image/gif"];
+      if (!allowed.includes(file.type)) {
+        photoError.textContent = "Please upload a JPEG, PNG, WEBP, or GIF file.";
+        photoError.classList.remove("hidden");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        photoError.textContent = "Image must be under 5 MB.";
+        photoError.classList.remove("hidden");
+        return;
+      }
+
+      selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = e => {
+        prevImg.src = e.target.result;
+        prevWrap.classList.remove("hidden");
+        dropZone.classList.add("border-terra");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    photoInput.addEventListener("change", e => {
+      if (e.target.files[0]) validateAndSetImage(e.target.files[0]);
+    });
+
+    // Drag-and-drop on the drop zone
+    dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("border-terra"); });
+    dropZone.addEventListener("dragleave", ()  => dropZone.classList.remove("border-terra"));
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file) validateAndSetImage(file);
+    });
+
+    removeImgBtn.addEventListener("click", () => {
+      selectedFile = null;
+      photoInput.value = "";
+      prevImg.src = "";
+      prevWrap.classList.add("hidden");
+      dropZone.classList.remove("border-terra");
+      photoError.classList.add("hidden");
+    });
+
+
+    // ── ⑤ TOAST HELPER ───────────────────────────────────
+
+    function showToast(msg, duration = 3500) {
+      toastMsg.textContent = msg;
+      toast.style.pointerEvents = "auto";
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => { toast.style.pointerEvents = "none"; }, 400);
+      }, duration);
+    }
+
+
+    // ── ⑥ RENDER MEMORY CARD ────────────────────────────
+
+    function formatDate(iso) {
+      try {
+        return new Date(iso).toLocaleDateString("en-GB", {
+          day: "numeric", month: "long", year: "numeric"
+        });
+      } catch { return ""; }
+    }
+
+    function extractVideoId(url) {
+      // YouTube
+      const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+      if (ytMatch) return { platform: "youtube", id: ytMatch[1] };
+      // Vimeo
+      const vmMatch = url.match(/vimeo\.com\/(\d+)/);
+      if (vmMatch) return { platform: "vimeo", id: vmMatch[1] };
+      return null;
+    }
+
+    function renderMemoryCard(entry) {
+      const card = document.createElement("div");
+      card.className = "memory-card bg-ivory p-6 flex flex-col gap-4 reveal";
+
+      // ── Header ──
+      const header = document.createElement("div");
+      header.className = "flex items-start justify-between gap-4";
+
+      const nameBlock = document.createElement("div");
+      const name = document.createElement("p");
+      name.className = "font-sans font-medium text-sm text-ink";
+      name.textContent = entry.name || "Anonymous";
+
+      const date = document.createElement("p");
+      date.className = "font-sans text-xs text-stone mt-0.5";
+      date.textContent = formatDate(entry.timestamp);
+
+      nameBlock.append(name, date);
+      header.append(nameBlock);
+      card.append(header);
+
+      // ── Message ──
+      const msgEl = document.createElement("p");
+      msgEl.className = "font-sans text-sm text-ash leading-7 flex-1";
+      msgEl.textContent = entry.message;
+      card.append(msgEl);
+
+      // ── Photo ──
+      if (entry.imageUrl) {
+        const img = document.createElement("img");
+        img.src = entry.imageUrl;
+        img.alt = "Memory photo";
+        img.loading = "lazy";
+        img.className = "w-full aspect-video object-cover border border-stone rounded-sm";
+        img.onerror = () => img.remove();
+        card.append(img);
+      }
+
+      // ── Video embed or link ──
+      if (entry.videoLink) {
+        const vid = extractVideoId(entry.videoLink);
+        if (vid) {
+          const wrap = document.createElement("div");
+          wrap.className = "aspect-video";
+          const iframe = document.createElement("iframe");
+          iframe.className = "w-full h-full border border-stone";
+          iframe.loading = "lazy";
+          iframe.allowFullscreen = true;
+          if (vid.platform === "youtube") {
+            iframe.src = `https://www.youtube-nocookie.com/embed/${vid.id}`;
+          } else {
+            iframe.src = `https://player.vimeo.com/video/${vid.id}`;
+          }
+          wrap.append(iframe);
+          card.append(wrap);
+        } else {
+          // Fallback: just show a link
+          const link = document.createElement("a");
+          link.href = entry.videoLink;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.className = "font-sans text-xs text-terra underline underline-offset-2 break-all";
+          link.textContent = "▶ View linked video";
+          card.append(link);
+        }
+      }
+
+      return card;
+    }
+
+    function renderMemories(memories, append = false) {
+      if (!append) memoriesGrid.innerHTML = "";
+
+      const slice = memories.slice(
+        append ? visibleCount - PAGE_SIZE : 0,
+        visibleCount
+      );
+
+      slice.forEach(m => {
+        const card = renderMemoryCard(m);
+        memoriesGrid.append(card);
+        // Trigger reveal animation
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => card.classList.add("visible"));
+        });
+      });
+
+      loadMoreWrap.classList.toggle("hidden", visibleCount >= memories.length);
+    }
+
+
+    // ── ⑦ FETCH MEMORIES FROM API ────────────────────────
+
+    async function fetchMemories() {
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_")) {
+        // Dev mode: show placeholder cards
+        memoriesLoading.classList.add("hidden");
+        memoriesEmpty.classList.remove("hidden");
+        return;
+      }
+
+      try {
+        const res  = await fetch(`${APPS_SCRIPT_URL}?action=getMemories`, { cache: "no-cache" });
+        const data = await res.json();
+
+        memoriesLoading.classList.add("hidden");
+
+        if (data.error) throw new Error(data.error);
+
+        allMemories = data.memories || [];
+
+        if (allMemories.length === 0) {
+          memoriesEmpty.classList.remove("hidden");
+        } else {
+          memoriesGrid.classList.remove("hidden");
+          renderMemories(allMemories);
+        }
+      } catch (err) {
+        memoriesLoading.classList.add("hidden");
+        memoriesError.classList.remove("hidden");
+        console.error("Fetch memories error:", err);
+      }
+    }
+
+    loadMoreBtn.addEventListener("click", () => {
+      visibleCount += PAGE_SIZE;
+      memoriesGrid.classList.remove("hidden");
+      renderMemories(allMemories, true);
+    });
+
+
+    // ── ⑧ FORM SUBMISSION ────────────────────────────────
+
+    async function readFileAsBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload  = e => resolve(e.target.result); // data URI
+        reader.onerror = ()  => reject(new Error("Could not read file."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function setSubmitting(loading) {
+      submitBtn.disabled  = loading;
+      submitLabel.textContent = loading ? "Submitting…" : "Submit Memory";
+      submitSpinner.classList.toggle("hidden", !loading);
+    }
+
+    function showFormError(msg) {
+      formError.textContent = msg;
+      formError.classList.remove("hidden");
+    }
+
+    function clearFormError() {
+      formError.textContent = "";
+      formError.classList.add("hidden");
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearFormError();
+
+      const name      = document.getElementById("name").value.trim();
+      const message   = document.getElementById("message").value.trim();
+      const videoLink = document.getElementById("videoLink").value.trim();
+      const hp_field  = document.getElementById("hp_field").value; // honeypot
+
+      // Basic validation
+      if (!message || message.length < 3) {
+        showFormError("Please write at least a brief memory before submitting.");
+        messageEl.focus();
+        return;
+      }
+
+      // Validate video URL format if provided
+      if (videoLink && !/^https?:\/\//i.test(videoLink)) {
+        showFormError("Please enter a valid URL for the video link (starting with https://).");
+        return;
+      }
+
+      setSubmitting(true);
+
+      try {
+        // Build payload
+        const payload = { name, message, videoLink, hp_field };
+
+        if (selectedFile) {
+          payload.imageData = await readFileAsBase64(selectedFile);
+          payload.imageName = selectedFile.name;
+        }
+
+        // POST to Apps Script
+        if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("YOUR_")) {
+          // Dev mode: simulate success
+          await new Promise(r => setTimeout(r, 1200));
+          prepend({
+            timestamp: new Date().toISOString(),
+            name: name || "Anonymous",
+            message,
+            imageUrl: selectedFile ? URL.createObjectURL(selectedFile) : "",
+            videoLink,
+          });
+          form.reset();
+          selectedFile = null;
+          prevWrap.classList.add("hidden");
+          charCountEl.textContent = "0";
+          showToast("Memory saved — thank you.");
+          setSubmitting(false);
+          return;
+        }
+
+        const res  = await fetch(APPS_SCRIPT_URL, {
+          method : "POST",
+          headers: { "Content-Type": "application/json" },
+          body   : JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (data.error) throw new Error(data.error);
+
+        // Prepend new card to the wall
+        prepend(data.entry);
+
+        // Reset form
+        form.reset();
+        selectedFile = null;
+        prevWrap.classList.add("hidden");
+        charCountEl.textContent = "0";
+        clearFormError();
+        showToast("Your memory has been recorded — thank you.");
+
+        // Scroll to memory wall
+        document.getElementById("memories").scrollIntoView({ behavior: "smooth" });
+
+      } catch (err) {
+        console.error("Submit error:", err);
+        showFormError(err.message || "Something went wrong. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
+    });
+
+
+    // ── ⑨ PREPEND A CARD TO THE WALL ─────────────────────
+
+    function prepend(entry) {
+      allMemories.unshift(entry);
+      visibleCount = Math.max(visibleCount, 1);
+
+      memoriesEmpty.classList.add("hidden");
+      memoriesGrid.classList.remove("hidden");
+
+      const card = renderMemoryCard(entry);
+      memoriesGrid.prepend(card);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => card.classList.add("visible"));
+      });
+    }
+
+
+    // ── ⑩ INIT ───────────────────────────────────────────
+    fetchMemories();
+
+  })();
+  </script>
+</body>
+</html>
