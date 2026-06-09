@@ -671,7 +671,7 @@
     "use strict";
 
     // ── ① CONFIGURE — paste your Apps Script URL here ──────
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPxTRAca3FQueIMd4M8DS4aTt6Z9IZhHPxiStlvproeXjewi24Q-u5BmmsWY7AOzqeGA/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzY0kH9PdDo53gA45lQ27N92jwcGOh-pqmi0udn-bF-xfjUAlfGKMANHaVFONdR4yMJzQ/exec";
     const PAGE_SIZE = 6;
 
     // ── STATE ───────────────────────────────────────────────
@@ -840,8 +840,17 @@
 
       // Photo
       if (entry.imageUrl) {
+        // Normalisasi semua format URL Drive ke thumbnail yang bisa diakses publik
+        let imgSrc = entry.imageUrl;
+        const driveId =
+          (imgSrc.match(/[?&]id=([a-zA-Z0-9_-]+)/)    || [])[1] ||
+          (imgSrc.match(/\/d\/([a-zA-Z0-9_-]+)/)       || [])[1] ||
+          (imgSrc.match(/thumbnail\?id=([a-zA-Z0-9_-]+)/) || [])[1];
+        if (driveId) {
+          imgSrc = `https://drive.google.com/thumbnail?id=${driveId}&sz=w800`;
+        }
         const img = document.createElement("img");
-        img.src = entry.imageUrl;
+        img.src = imgSrc;
         img.alt = "Memory photo";
         img.loading = "lazy";
         img.className = "w-full aspect-video object-cover border border-stone rounded-sm";
